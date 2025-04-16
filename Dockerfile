@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM python:3.10
+FROM python:3.10-slim
 WORKDIR /app
 COPY . /app
 RUN pip install flask joblib scikit-learn numpy
