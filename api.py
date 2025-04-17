@@ -4,23 +4,35 @@ from flask import Flask, request, jsonify
 import joblib
 import numpy as np
 
+# Initialize Flask app
 app = Flask(__name__)
 
-# Load model and scaler
-model = joblib.load("model.pkl")
-scaler = joblib.load("scaler.pkl")
+# Load the trained model and scaler
+try:
+    model = joblib.load("model.pkl")
+    scaler = joblib.load("scaler.pkl")
+except Exception as e:
+    raise RuntimeError(f"Error loading model or scaler: {e}")
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
-    return "Heart Disease Prediction API is Running"
+    return jsonify({"message": "Heart Disease Prediction API is running!"})
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.json
-    input_data = np.array(data["features"]).reshape(1, -1)
-    scaled_data = scaler.transform(input_data)
-    prediction = model.predict(scaled_data)
-    return jsonify({"prediction": int(prediction[0])})
+    try:
+        data = request.get_json()
+        if "features" not in data:
+            return jsonify({"error": "Missing 'features' in request"}), 400
+
+        features = np.array(data["features"]).reshape(1, -1)
+        scaled_features = scaler.transform(features)
+        prediction = model.predict(scaled_features)
+
+        return jsonify({"prediction": int(prediction[0])})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
