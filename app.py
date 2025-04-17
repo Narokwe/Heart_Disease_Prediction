@@ -15,7 +15,7 @@ for label in labels:
 
 if st.button("Predict"):
     # Replace with your Railway public URL
-    url = "https://your-railway-url.up.railway.app/predict"
+    url = "https://heartdiseaseprediction-production.up.railway.app/predict"
     response = requests.post(url, json={"features": features})
     prediction = response.json()["prediction"]
 
