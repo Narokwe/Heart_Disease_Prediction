@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: streamlit run api.py --server.port=8080 --server.enableCORS=false
